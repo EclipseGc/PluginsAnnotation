@@ -12,10 +12,25 @@ use EclipseGc\Plugin\PluginDefinitionInterface;
 
 class AnnotatedPluginDefinition extends Annotation implements PluginDefinitionInterface {
 
+  /**
+   * The string identifier of the plugin.
+   *
+   * @var string
+   */
   protected $pluginId;
 
+  /**
+   * The class this plugin will instantiate.
+   *
+   * @var string
+   */
   protected $class;
 
+  /**
+   * The optional factory to instantiate this plugin.
+   *
+   * @var string
+   */
   protected $factory;
 
   /**

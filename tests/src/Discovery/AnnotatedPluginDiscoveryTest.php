@@ -28,6 +28,10 @@ class AnnotatedPluginDiscoveryTest extends \PHPUnit_Framework_TestCase {
     $dictionary->setDiscovery($discovery);
     $dictionary->setFactoryClass('EclipseGc\PluginAnnotation\Test\Factory\Foo');
     $dictionary->setFactoryResolver(new TestFactoryResolver());
-    print_r($dictionary->createInstance('baz'));
+    $this->assertEquals(3, count($dictionary->getDefinitions()));
+    $this->assertEquals('Test', $dictionary->getDefinition('foo')->getProperty('arg1'));
+    $this->assertEquals('Test', $dictionary->createInstance('foo')->getPluginDefinition()->getProperty('arg1'));
+    print_r($dictionary->getDefinitions());
   }
+
 }

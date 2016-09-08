@@ -14,8 +14,6 @@ use EclipseGc\PluginAnnotation\Definition\AnnotatedPluginDefinition;
  */
 class Foo extends AnnotatedPluginDefinition {
 
-  protected $pluginId;
-
   protected $arg1;
 
 }
