@@ -10,6 +10,8 @@ namespace EclipseGc\PluginAnnotation\Test\Discovery;
 
 use EclipseGc\Plugin\Test\Utility\TestFactoryResolver;
 use EclipseGc\PluginAnnotation\Discovery\AnnotatedPluginDiscovery;
+use EclipseGc\PluginAnnotation\Exception\NonexistentAnnotationException;
+use EclipseGc\PluginAnnotation\Exception\NonexistentInterfaceException;
 
 class AnnotatedPluginDiscoveryTest extends \PHPUnit_Framework_TestCase {
 
@@ -37,6 +39,22 @@ class AnnotatedPluginDiscoveryTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals(3, count($dictionary->getDefinitions()));
     $this->assertEquals('Test', $dictionary->getDefinition('foo')->getProperty('arg1'));
     $this->assertEquals('Test', $dictionary->createInstance('foo')->getPluginDefinition()->getProperty('arg1'));
+  }
+
+  public function testAnnotatedDiscoveryInterfaceException() {
+    $interface = 'EclipseGc\PluginAnnotation\Test\BarInterface';
+    $namespaces = new \ArrayIterator([]);
+    $this->expectException(NonexistentInterfaceException::class);
+    $this->expectExceptionMessage(sprintf("The specified interface %s does not exist.", $interface));
+    new AnnotatedPluginDiscovery($namespaces, 'Plugin' . DIRECTORY_SEPARATOR . 'Foo', $interface, 'EclipseGc\PluginAnnotation\Test\Annotation\Foo');
+  }
+
+  public function testAnnotatedDiscoveryAnnotationException() {
+    $annotation = 'EclipseGc\PluginAnnotation\Test\Annotation\Bar';
+    $namespaces = new \ArrayIterator([]);
+    $this->expectException(NonexistentAnnotationException::class);
+    $this->expectExceptionMessage(sprintf("The specified annotation class %s does not exist.", $annotation));
+    new AnnotatedPluginDiscovery($namespaces, 'Plugin' . DIRECTORY_SEPARATOR . 'Foo', 'EclipseGc\PluginAnnotation\Test\FooInterface', $annotation);
   }
 
 }

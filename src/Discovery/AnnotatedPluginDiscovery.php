@@ -12,6 +12,8 @@ use Doctrine\Common\Annotations\AnnotationRegistry;
 use EclipseGc\Plugin\Discovery\PluginDefinitionSet;
 use EclipseGc\Plugin\Discovery\PluginDiscoveryInterface;
 use EclipseGc\Plugin\PluginDefinitionInterface;
+use EclipseGc\PluginAnnotation\Exception\NonexistentAnnotationException;
+use EclipseGc\PluginAnnotation\Exception\NonexistentInterfaceException;
 
 class AnnotatedPluginDiscovery implements PluginDiscoveryInterface {
 
@@ -45,13 +47,13 @@ class AnnotatedPluginDiscovery implements PluginDiscoveryInterface {
       $this->interface = $interface;
     }
     else {
-      throw new \Exception(sprintf("The specified interface %s does not exist.", $interface));
+      throw new NonexistentInterfaceException(sprintf("The specified interface %s does not exist.", $interface));
     }
     if (class_exists($annotationClass)) {
       $this->annotationClass = $annotationClass;
     }
     else {
-      throw new \Exception(sprintf("The specified annotation class %s does not exist."), $annotationClass);
+      throw new NonexistentAnnotationException(sprintf("The specified annotation class %s does not exist.", $annotationClass));
     }
   }
 
