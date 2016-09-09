@@ -20,6 +20,10 @@ class AnnotatedPluginDiscoveryTest extends \PHPUnit_Framework_TestCase {
    * @covers \EclipseGc\PluginAnnotation\Discovery\AnnotatedPluginDiscovery::findPluginImplementations
    * @covers \EclipseGc\PluginAnnotation\Discovery\AnnotatedPluginDiscovery::extractClassNames
    * @covers \EclipseGc\PluginAnnotation\Discovery\AnnotatedPluginDiscovery::extractNamespace
+   * @covers \EclipseGc\PluginAnnotation\Definition\AnnotatedPluginDefinition::getProperty
+   * @covers \EclipseGc\PluginAnnotation\Definition\AnnotatedPluginDefinition::getProperties
+   * @covers \EclipseGc\PluginAnnotation\Definition\AnnotatedPluginDefinition::getClass
+   * @covers \EclipseGc\PluginAnnotation\Definition\AnnotatedPluginDefinition::getFactory
    */
   public function testAnnotatedDiscovery() {
     /** @var \EclipseGc\Plugin\Test\Utility\AbstractPluginDictionary $dictionary */
@@ -37,7 +41,9 @@ class AnnotatedPluginDiscoveryTest extends \PHPUnit_Framework_TestCase {
     $dictionary->setFactoryClass('EclipseGc\PluginAnnotation\Test\Factory\Foo');
     $dictionary->setFactoryResolver(new TestFactoryResolver());
     $this->assertEquals(3, count($dictionary->getDefinitions()));
+    $this->assertEquals('foo', $dictionary->getDefinition('foo')->getPluginId());
     $this->assertEquals('Test', $dictionary->getDefinition('foo')->getProperty('arg1'));
+    $this->assertEquals(['pluginId' => 'foo', 'arg1' => 'Test'], $dictionary->getDefinition('foo')->getProperties());
     $this->assertEquals('Test', $dictionary->createInstance('foo')->getPluginDefinition()->getProperty('arg1'));
   }
 
