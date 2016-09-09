@@ -74,7 +74,7 @@ class AnnotatedPluginDiscovery implements PluginDiscoveryInterface {
           $tokens = token_get_all($file_contents);
           $classes = $this->extractClassNames($tokens);
           foreach ($classes as $class) {
-            if (!empty(class_implements($class)[$this->interface])) {
+            if (class_exists($class) && !empty(class_implements($class)[$this->interface])) {
               $definition = $reader->getClassAnnotation(new \ReflectionClass($class), $this->annotationClass);
               if ($definition) {
                 $reflector = new \ReflectionClass($definition);
