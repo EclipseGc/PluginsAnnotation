@@ -3,6 +3,3 @@ php:
     - '7.0'
 install:
     - composer install
-addons:
-    code_climate:
-        repo_token:
