@@ -13,6 +13,12 @@ use EclipseGc\PluginAnnotation\Discovery\AnnotatedPluginDiscovery;
 
 class AnnotatedPluginDiscoveryTest extends \PHPUnit_Framework_TestCase {
 
+  /**
+   * @covers \EclipseGc\PluginAnnotation\Discovery\AnnotatedPluginDiscovery::__construct
+   * @covers \EclipseGc\PluginAnnotation\Discovery\AnnotatedPluginDiscovery::findPluginImplementations
+   * @covers \EclipseGc\PluginAnnotation\Discovery\AnnotatedPluginDiscovery::extractClassNames
+   * @covers \EclipseGc\PluginAnnotation\Discovery\AnnotatedPluginDiscovery::extractNamespace
+   */
   public function testAnnotatedDiscovery() {
     /** @var \EclipseGc\Plugin\Test\Utility\AbstractPluginDictionary $dictionary */
     $dictionary = $this->getMockForAbstractClass('\EclipseGc\Plugin\Test\Utility\AbstractPluginDictionary');
@@ -31,7 +37,6 @@ class AnnotatedPluginDiscoveryTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals(3, count($dictionary->getDefinitions()));
     $this->assertEquals('Test', $dictionary->getDefinition('foo')->getProperty('arg1'));
     $this->assertEquals('Test', $dictionary->createInstance('foo')->getPluginDefinition()->getProperty('arg1'));
-    print_r($dictionary->getDefinitions());
   }
 
 }
