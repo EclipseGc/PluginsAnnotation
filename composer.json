@@ -1,5 +1,7 @@
 {
   "name": "eclipsegc/plugins_annotation",
+  "description": "This library provides a doctrine annotations based plugin discovery mechanism.",
+  "license": "GPL-2.0+",
   "authors": [
     {
       "name": "Kris Vanderwater",
@@ -14,6 +16,7 @@
     }
   },
   "require": {
+    "php": ">=7.0",
     "eclipsegc/plugins": "~0.1",
     "doctrine/common": "~2.6"
   },
