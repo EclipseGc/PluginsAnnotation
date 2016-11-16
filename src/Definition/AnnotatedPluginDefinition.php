@@ -31,7 +31,7 @@ class AnnotatedPluginDefinition extends Annotation implements PluginDefinitionIn
    *
    * @var string
    */
-  protected $factory;
+  protected $factory = '';
 
   /**
    * {@inheritdoc}
