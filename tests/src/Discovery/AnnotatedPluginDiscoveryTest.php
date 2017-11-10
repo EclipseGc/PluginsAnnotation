@@ -12,6 +12,7 @@ use EclipseGc\Plugin\Test\Utility\TestFactoryResolver;
 use EclipseGc\PluginAnnotation\Discovery\AnnotatedPluginDiscovery;
 use EclipseGc\PluginAnnotation\Exception\NonexistentAnnotationException;
 use EclipseGc\PluginAnnotation\Exception\NonexistentInterfaceException;
+use EclipseGc\PluginAnnotation\Test\Annotation\SubAnnotation;
 
 class AnnotatedPluginDiscoveryTest extends \PHPUnit_Framework_TestCase {
 
@@ -41,11 +42,13 @@ class AnnotatedPluginDiscoveryTest extends \PHPUnit_Framework_TestCase {
     $dictionary->setDiscovery($discovery);
     $dictionary->setFactoryClass('EclipseGc\PluginAnnotation\Test\Factory\Foo');
     $dictionary->setFactoryResolver(new TestFactoryResolver());
+    $subAnnotation = new SubAnnotation(['value' => "test"]);
     $this->assertEquals(3, count($dictionary->getDefinitions()));
     $this->assertEquals('foo', $dictionary->getDefinition('foo')->getPluginId());
     $this->assertEquals('Test', $dictionary->getDefinition('foo')->getProperty('arg1'));
     $this->assertEquals(NULL, $dictionary->getDefinition('foo')->getProperty('nothing'));
-    $this->assertEquals(['pluginId' => 'foo', 'arg1' => 'Test'], $dictionary->getDefinition('foo')->getProperties());
+    $this->assertEquals($subAnnotation, $dictionary->getDefinition('foo')->getProperty('subAnnotation'));
+    $this->assertEquals(['pluginId' => 'foo', 'arg1' => 'Test', 'subAnnotation' => $subAnnotation], $dictionary->getDefinition('foo')->getProperties());
     $this->assertEquals('Test', $dictionary->createInstance('foo')->getPluginDefinition()->getProperty('arg1'));
   }
 

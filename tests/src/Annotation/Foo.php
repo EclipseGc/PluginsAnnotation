@@ -16,4 +16,6 @@ class Foo extends AnnotatedPluginDefinition {
 
   protected $arg1;
 
+  protected $subAnnotation;
+
 }

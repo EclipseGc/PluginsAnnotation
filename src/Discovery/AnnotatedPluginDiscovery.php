@@ -1,14 +1,12 @@
 <?php
 
-/**
- * @file
- * Contains \EclipseGc\PluginAnnotation\Discovery\AnnotatedPluginDiscovery.
- */
-
 namespace EclipseGc\PluginAnnotation\Discovery;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
+use Doctrine\Common\Annotations\DocParser;
+use Doctrine\Common\Reflection\ClassFinderInterface;
+use Doctrine\Common\Reflection\StaticReflectionParser;
 use EclipseGc\Plugin\Discovery\PluginDefinitionSet;
 use EclipseGc\Plugin\Discovery\PluginDiscoveryInterface;
 use EclipseGc\Plugin\PluginDefinitionInterface;
@@ -38,23 +36,38 @@ class AnnotatedPluginDiscovery implements PluginDiscoveryInterface {
   protected $annotationClass;
 
   /**
+   * @var \Doctrine\Common\Annotations\Reader
+   */
+  protected $reader;
+
+  /**
    * AnnotatedPluginDiscovery constructor.
+   *
+   * @param \Traversable $namespaces
+   *   A traversable list of namespaces.
+   * @param string $directory
+   *   The sub-directory structure plugins will appear in within namespaces.
+   * @param string $interface
+   *   The interface plugins must implement.
+   * @param string $annotationClass
+   *   The annotation class plugins must use.
+   *
+   * @throws \EclipseGc\PluginAnnotation\Exception\NonexistentAnnotationException
+   * @throws \EclipseGc\PluginAnnotation\Exception\NonexistentInterfaceException
+   *
    */
   public function __construct(\Traversable $namespaces, string $directory, string $interface, string $annotationClass) {
-    $this->namespaces = $namespaces;
-    $this->directory = $directory;
-    if (interface_exists($interface)) {
-      $this->interface = $interface;
-    }
-    else {
+    if (!interface_exists($interface)) {
       throw new NonexistentInterfaceException(sprintf("The specified interface %s does not exist.", $interface));
+
     }
-    if (class_exists($annotationClass)) {
-      $this->annotationClass = $annotationClass;
-    }
-    else {
+    if (!class_exists($annotationClass)) {
       throw new NonexistentAnnotationException(sprintf("The specified annotation class %s does not exist.", $annotationClass));
     }
+    $this->namespaces = $namespaces;
+    $this->directory = $directory;
+    $this->interface = $interface;
+    $this->annotationClass = $annotationClass;
   }
 
   /**
@@ -65,7 +78,7 @@ class AnnotatedPluginDiscovery implements PluginDiscoveryInterface {
     AnnotationRegistry::reset();
     // Register the namespaces of classes that can be used for annotations.
     AnnotationRegistry::registerLoader('class_exists');
-    $reader = new AnnotationReader();
+    $reader = $this->getReader();
     foreach ($this->namespaces as $namespace => $directory) {
       $plugin_directory = "$directory/{$this->directory}";
       if (file_exists($plugin_directory)) {
@@ -75,7 +88,7 @@ class AnnotatedPluginDiscovery implements PluginDiscoveryInterface {
           $classes = $this->extractClassNames($tokens);
           foreach ($classes as $class) {
             if (class_exists($class) && !empty(class_implements($class)[$this->interface])) {
-              $definition = $reader->getClassAnnotation(new \ReflectionClass($class), $this->annotationClass);
+              $definition = $reader->getClassAnnotation((new StaticReflectionParser($class, $this->getFileFinder($file)))->getReflectionClass(), $this->annotationClass);
               if ($definition) {
                 $reflector = new \ReflectionClass($definition);
                 $property = $reflector->getProperty('class');
@@ -131,6 +144,38 @@ class AnnotatedPluginDiscovery implements PluginDiscoveryInterface {
       }
     }
     return $namespace;
+  }
+
+  /**
+   * @param $file
+   *
+   * @return \Doctrine\Common\Reflection\ClassFinderInterface
+   */
+  protected function getFileFinder($file) {
+    return new class($file) implements ClassFinderInterface {
+
+      protected $file;
+
+      public function __construct($file) {
+        $this->file = $file;
+      }
+
+      public function findFile($class) {
+        return $this->file;
+      }
+    };
+  }
+
+  /**
+   * @return \Doctrine\Common\Annotations\Reader
+   */
+  protected function getReader() {
+    if (empty($this->reader)) {
+      $docParser = new DocParser();
+      $docParser->setIgnoreNotImportedAnnotations(TRUE);
+      $this->reader = new AnnotationReader($docParser);
+    }
+    return $this->reader;
   }
 
 }

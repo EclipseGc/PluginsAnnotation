@@ -8,13 +8,16 @@
 namespace EclipseGc\PluginAnnotation\Test\Plugin\Foo;
 
 use EclipseGc\Plugin\PluginDefinitionInterface;
+use EclipseGc\PluginAnnotation\Test\Annotation\Foo as FooAnnotation;
+use EclipseGc\PluginAnnotation\Test\Annotation\SubAnnotation;
 use EclipseGc\PluginAnnotation\Test\FooInterface;
 
 /**
- * @EclipseGc\PluginAnnotation\Test\Annotation\Foo(
+ * @FooAnnotation(
  *   pluginId = "foo",
  *   arg1 = "Test",
- *   factory = "EclipseGc\PluginAnnotation\Test\Factory\Foo"
+ *   factory = "EclipseGc\PluginAnnotation\Test\Factory\Foo",
+ *   subAnnotation = @SubAnnotation("test")
  * )
  */
 class Foo implements FooInterface {
