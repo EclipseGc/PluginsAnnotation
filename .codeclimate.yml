@@ -4,14 +4,22 @@ engines:
     enabled: true
     config:
       languages:
-      - ruby
       - javascript
-      - python
       - php
   fixme:
     enabled: true
   phpmd:
     enabled: true
+    config:
+      file_extensions: "php,inc,module"
+      rulesets: ".phpmd.xml"
+  phpcodesniffer:
+    enabled: true
+    config:
+      file_extensions: "php,inc,module"
+      encoding: utf-8
+      standard: "Drupal"
+      ignore_warnings: true
 ratings:
   paths:
   - "**.inc"
@@ -19,7 +27,5 @@ ratings:
   - "**.jsx"
   - "**.module"
   - "**.php"
-  - "**.py"
-  - "**.rb"
 exclude_paths:
 - tests/
